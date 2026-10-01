@@ -66,8 +66,13 @@ jobs:
       - name: Generate icons
         run: npm run icons
 
+      # `--publish never` is load-bearing. electron-builder infers a `github`
+      # publisher from package.json's `repository` field, so without this it tries
+      # to create the Release itself and fails on a missing token - while the
+      # `publish` job below already owns that, deliberately, so four parallel
+      # builds cannot race to create it.
       - name: Package ${{ matrix.args }}
-        run: npx electron-builder ${{ matrix.args }}
+        run: npx electron-builder ${{ matrix.args }} --publish never
 
       - name: Collect artifacts
         uses: actions/upload-artifact@v4
