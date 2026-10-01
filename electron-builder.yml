@@ -3,6 +3,13 @@ productName: LittlePET
 directories:
   output: release
   buildResources: build
+
+# uiohook-napi ships prebuilt binaries for every platform we ship on, so there is
+# nothing to compile - and compiling it fails on a machine without X11 headers
+# even when building for Windows. The app treats the hook as optional at runtime
+# (PLAN.md 3.4), so shipping the prebuild is both correct and the intended path.
+npmRebuild: false
+
 files:
   - dist/
   - package.json
