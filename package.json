@@ -1,6 +1,7 @@
 {
   "name": "littlepet",
   "productName": "LittlePET",
+  "desktopName": "LittlePET",
   "version": "0.1.0",
   "description": "A pixel desktop cat that lives on your screen, reacts to what you do, and reminds you to take care of yourself.",
   "license": "MIT",

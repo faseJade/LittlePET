@@ -1,0 +1,145 @@
+name: Release
+
+# Builds installers and attaches them to a GitHub Release.
+#
+# This exists because NSIS and DMG need their own toolchains, and those only run
+# natively: electron-builder needs `wine` to stamp an icon into a Windows exe,
+# which is not something you want to install on a build machine. GitHub gives
+# us a real Windows and a real macOS runner for free, so each installer is built
+# on the platform it targets.
+#
+# Nothing unsigned is published to users as if it were signed - see the release
+# notes template at the bottom of this file.
+
+on:
+  # Manual, for a first release or a rebuild.
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Tag to build and publish (e.g. v0.1.0)
+        required: true
+        type: string
+  # Pushing a tag publishes it.
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Windows
+            os: windows-latest
+            args: --win nsis zip
+            draft_name: Windows
+          - name: macOS
+            os: macos-latest
+            args: --mac dmg zip
+            draft_name: macOS
+          - name: Linux
+            os: ubuntu-latest
+            args: --linux AppImage
+            draft_name: Linux
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build the app bundle
+        run: npm run build
+
+      # Icons are generated, not committed (§0.1: no binaries in the repo), so
+      # every build has to make its own. Packaging fails without them.
+      - name: Generate icons
+        run: npm run icons
+
+      - name: Package ${{ matrix.args }}
+        run: npx electron-builder ${{ matrix.args }}
+
+      - name: Collect artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ matrix.name }}
+          path: |
+            release/*.exe
+            release/*.zip
+            release/*.dmg
+            release/*.AppImage
+            release/*.blockmap
+            release/latest*.yml
+          if-no-files-found: error
+          retention-days: 7
+
+  # A single job that owns the Release object, so four parallel builds cannot
+  # race to create it. `softprops/action-gh-release` is idempotent here: it
+  # creates the release if missing and otherwise appends assets.
+  publish:
+    name: Attach to release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: Create the release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.tag || github.ref_name }}
+          name: LittlePET ${{ inputs.tag || github.ref_name }}
+          draft: true
+          prerelease: ${{ contains(inputs.tag || github.ref_name, '-') }}
+          files: artifacts/*
+          body: |
+            LittlePET ${{ inputs.tag || github.ref_name }}
+
+            A pixel desktop cat that lives on your desktop. MIT licensed, offline,
+            no telemetry, no license key.
+
+            **These installers are unsigned.** Windows SmartScreen and Gatekeeper
+            will warn on first run, because nothing here is signed with a paid code
+            signing certificate. That is expected, not a compromise.
+
+            | Platform | File |
+            |---|---|
+            | Windows | `LittlePET-<version>-win-x64.exe` (installer) |
+            | macOS | `LittlePET-<version>-mac-<arch>.dmg` |
+            | Linux | `LittlePET-<version>-linux-x64.AppImage` |
+
+            Linux: `chmod +x LittlePET-<version>-linux-x64.AppImage` then run it.
+
+            ## What works
+
+            Milestone 1, the core engine. The cat sits on your desktop, follows
+            your cursor with its eyes, and can be picked up and shaken like
+            mochi. Per-feature status is in
+            [docs/PARITY.md](https://github.com/faseJade/LittlePET/blob/main/docs/PARITY.md)
+            and nothing is overclaimed there.
+
+            ## Permissions
+
+            On macOS the first launch may ask for Accessibility permission. The app
+            runs without it - you keep eye follow and dragging, and only the
+            system-wide typing and scroll reactions are lost.
+
+            ## Verify
+
+            ```bash
+            sha256sum LittlePET-*.exe
+            ```

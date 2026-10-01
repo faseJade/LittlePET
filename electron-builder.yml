@@ -4,6 +4,11 @@ directories:
   output: release
   buildResources: build
 
+# One predictable name per artifact, so a download URL can be written down in the
+# README and a user can tell which file is which. electron-builder's default
+# includes the author name, which leaks into a public URL.
+artifactName: ${productName}-${version}-${os}-${arch}.${ext}
+
 # uiohook-napi ships prebuilt binaries for every platform we ship on, so there is
 # nothing to compile - and compiling it fails on a machine without X11 headers
 # even when building for Windows. The app treats the hook as optional at runtime
@@ -37,5 +42,13 @@ linux:
   target:
     - AppImage
     - deb
-  icon: build/icon
+  # A specific file, not the directory: electron-builder does not search a folder
+  # for icons, and silently falls back to the default Electron icon when it
+  # cannot resolve the path. 512px is what AppImage wants.
+  icon: build/icon/icon-512.png
   category: Utility
+  # Without this the window gets no WM_CLASS association, so a desktop
+  # environment cannot link the running window to its .desktop entry and the cat
+  # shows up as a nameless process in the task list.
+  synopsis: A pixel desktop cat
+  description: A pixel cat that lives on your desktop, reacts to what you do, and reminds you to take care of yourself. Offline, MIT licensed, no telemetry.
