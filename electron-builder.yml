@@ -1,0 +1,34 @@
+appId: com.littlepet.app
+productName: LittlePET
+directories:
+  output: release
+  buildResources: build
+files:
+  - dist/
+  - package.json
+  - LICENSE
+extraResources:
+  - from: build/icon
+    to: icon
+    filter:
+      - '*.png'
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  icon: build/icon/icon.ico
+mac:
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+  icon: build/icon/icon.icns
+  category: entertainment
+linux:
+  target:
+    - AppImage
+    - deb
+  icon: build/icon
+  category: Utility

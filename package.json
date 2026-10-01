@@ -1,0 +1,56 @@
+{
+  "name": "littlepet",
+  "productName": "LittlePET",
+  "version": "0.1.0",
+  "description": "A pixel desktop cat that lives on your screen, reacts to what you do, and reminds you to take care of yourself.",
+  "license": "MIT",
+  "author": "faseJade",
+  "homepage": "https://github.com/faseJade/LittlePET",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/faseJade/LittlePET.git"
+  },
+  "bugs": {
+    "url": "https://github.com/faseJade/LittlePET/issues"
+  },
+  "main": "dist/main/index.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "npm run build && electron .",
+    "watch": "node scripts/build.mjs --watch",
+    "start": "electron .",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:golden:update": "vitest run --update",
+    "assets:audit": "node scripts/check-assets.mjs",
+    "icons": "node scripts/gen-icons.mjs",
+    "cat": "node scripts/gen-cat.mjs",
+    "preview": "node scripts/preview.mjs",
+    "verify": "npm run lint && npm run typecheck && npm run test && npm run assets:audit",
+    "dist": "npm run build && electron-builder",
+    "dist:dir": "npm run build && electron-builder --dir",
+    "icons:preview": "node scripts/gen-icons.mjs --preview"
+  },
+  "dependencies": {
+    "uiohook-napi": "^1.5.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^22.10.0",
+    "electron": "^44.5.1",
+    "electron-builder": "^26.15.3",
+    "esbuild": "^0.28.2",
+    "eslint": "^9.17.0",
+    "prettier": "^3.4.2",
+    "typescript": "5.9.3",
+    "typescript-eslint": "^8.71.0",
+    "vitest": "^5.0.3"
+  }
+}

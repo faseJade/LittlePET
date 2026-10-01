@@ -1,0 +1,7 @@
+dist/
+release/
+out/
+build/
+.art/
+package-lock.json
+src/sprites/cats/

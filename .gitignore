@@ -1,0 +1,18 @@
+node_modules/
+dist/
+release/
+out/
+
+# Generated art. src/sprites/ is the committed source of truth; everything under
+# .art/ is a review artifact produced by `npm run cat`, and build/icon by
+# `npm run icons`. Neither is ever committed.
+.art/
+build/
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+coverage/
+test-results/
+playwright-report/

@@ -1,0 +1,9 @@
+* text=auto eol=lf
+
+# Generated sprite source. Committed (PLAN.md 6.6), but nothing should ever try
+# to renormalise it - a stray CRLF would change what the compiler reads.
+src/sprites/cats/*.ts text eol=lf
+
+*.png binary
+*.ico binary
+*.icns binary

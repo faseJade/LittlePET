@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <!--
+      The renderer is a trusted pet surface, but it loads nothing remote. The CSP
+      bans network fetches outright, which is the same promise PLAN.md 0.3 makes
+      and one that is enforced here rather than merely intended.
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;"
+    />
+    <title>LittlePET</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: transparent;
+        /* No cursor: the window is click-through most of the time, and when it is
+           interactive the OS cursor should stay the user's own. */
+        cursor: default;
+        user-select: none;
+        -webkit-user-drag: none;
+      }
+      canvas {
+        display: block;
+        /* Transparent window: no background at all, or Windows composites the
+           black box instead of the cat. */
+        background: transparent;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="stage"></canvas>
+    <script src="./pet.js"></script>
+  </body>
+</html>
