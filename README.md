@@ -116,6 +116,7 @@ and why the click-through mask is a union across all frames:
 |                                                  |                                                                                                                                                              |
 | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | [PLAN.md](PLAN.md)                               | The authoritative plan: parity matrix, stack, architecture decisions, milestones, quality gates. Anything not in here gets added to here before it is built. |
+| [docs/BUILD-LOG.md](docs/BUILD-LOG.md)           | Handover document: what was built, why each decision was made, what is verified, what is not.                                                                |
 | [docs/PARITY.md](docs/PARITY.md)                 | What works, what doesn't, and the acceptance test for each. Every `done` row is checked against a real test file.                                            |
 | [docs/architecture.md](docs/architecture.md)     | Process split, bridge, click-through, the frame loop, the behavior machine.                                                                                  |
 | [docs/behavior-specs.md](docs/behavior-specs.md) | One entry per reaction: triggers, mechanics, how it ends, what it must not do.                                                                               |
